@@ -27,8 +27,8 @@
 - [x] Lorenz Equation ODE Solver
 - [x] Defining Posterior (Likelihood and Prior)
 - [x] Sample Posterior through Transport Map Library
-- [ ] Wait for Feedback
-- [ ] Improve Thesis with Feedback
+- [x] Wait for Feedback
+- [x] Improve Thesis with Feedback
 - [x] Finish Chapter Anwendung
-- [ ] Finsh the Conclusion
-- [ ] Finalize Application
+- [x] Finsh the Conclusion
+- [x] Finalize Application
