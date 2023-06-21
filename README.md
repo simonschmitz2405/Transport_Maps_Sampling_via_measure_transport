@@ -1,6 +1,7 @@
 # Thesis - Transport Maps: Sampling via measure transport - Simon Schmitz
 
 This is the implementation for the Bachelor's thesis: Transport Maps: Sampling via measure transport.
+
 In statistics and data science, we often have to deal with complicated probability measures.
 A common goal is to explore this complex probability measure by generating samples
 or by estimating statistics of this given target measure. Avoiding classical stochastic
