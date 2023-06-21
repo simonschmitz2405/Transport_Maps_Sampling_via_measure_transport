@@ -8,7 +8,7 @@ from scipy.integrate import solve_ivp
 import TransportMaps.Diagnostics as DIAG
 from TransportMaps import KL
 import time
-from scipy.optimize import minimize
+
 
 '''
 Define the Posterior distribution by generating synthetic data
@@ -100,8 +100,6 @@ class ForwardOperator(MAPS.Map):
             new_line = np.vstack((A,B,C)).flatten()
             out[i,:] = new_line
         return out
-  
-
     
 # Initialize the map
 Gmap = ForwardOperator()
@@ -118,27 +116,16 @@ logL = LKL.AdditiveLogLikelihood(d, noise, Gmap)
 # Create the posterior distribution by asemblying with log-likelihood and prior
 post = DISTINF.BayesPosteriorDistribution(logL, prior)
 
-# Calculate the MAP estimator
-x0 = [3.5,5.5,6.5] #initial guess
-def obj(x):
-    return -post.pdf(np.array([x]))
-
-# Optimization for MAP estimator
-options = {'maxiter': 1000000}
-result = minimize(obj,x0 = x0,tol=10e-175,options=options)
-print('MAP estimator exact',result)
-
-
 # Visualize the prior distribution
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedConditionals(prior, range_vec=[1,11],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr,show_axis=True)
+fig = DIAG.plotAlignedConditionals(prior, range_vec=[1,11],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr, title='Prior',show_title=True)
 plt.show()
 
 # Visualize the posterior distribution
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedConditionals(post, range_vec=[1,11],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr)
+fig = DIAG.plotAlignedConditionals(post, range_vec=[1,11],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr,title='Posterior',show_title=True)
 plt.show()
 
 
@@ -174,16 +161,6 @@ elapsed_time_Construct_TM1 = end_time_Construct_TM1 - start_time_Construct_TM1
 print("Elapsed time for Construction of TM with order 1:", elapsed_time_Construct_TM1, "seconds")
 
 
-# Calculate the MAP estimator
-x0 = [3.5,5.5,6.5] #initial guess
-def obj(x):
-    return -push_rho.pdf(np.array([x]))
-
-# Optimization for MAP estimator
-options = {'maxiter': 1000000}
-result = minimize(obj,x0 = x0,tol=10e-175,options=options)
-print('MAP estimator approx order one',result)
-
 # Define the number of samples 
 Nsample_TM = 10000
 
@@ -192,17 +169,16 @@ start_time_TM2 = time.time() # Start the timer
 samples = push_rho.rvs(Nsample_TM) # Generate samples
 end_time_TM2 = time.time() # End the timer
 
-
 # Visualize the aligned conditonals of push forward
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedConditionals(push_rho, range_vec=[0,10],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr)
+fig = DIAG.plotAlignedConditionals(push_rho, range_vec=[0,10],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr,title='Push forward of TM with order 1',show_title=True)
 plt.show()
 
 # Visualize the aligned marginals for samples generated of push forward
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr,title='',show_axis=True)
+fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr, figname='Marginals',title='Samples_TM with order 1')
 plt.show()
 
 
@@ -244,15 +220,6 @@ elapsed_time_Construct_TM2 = end_time_Construct_TM2 - start_time_Construct_TM2
 # Print the elapsed time
 print("Elapsed time for Construction of TM with order 2:", elapsed_time_Construct_TM2, "seconds")
 
-# Calculate the MAP estimator
-x0 = [3.5,5.5,6.5] #initial guess
-def obj(x):
-    return -push_rho.pdf(np.array([x]))
-
-# Optimization for MAP estimator
-options = {'maxiter': 1000000}
-result = minimize(obj,x0 = x0,tol=10e-175,options=options)
-print('MAP estimator approx order two',result)
 
 # Generate transport maps samples and stop the time
 start_time_TM2 = time.time() # Start the timer
@@ -262,13 +229,13 @@ end_time_TM2 = time.time() # End the timer
 # Visualize aligned conditionals of push forward
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedConditionals(push_rho, range_vec=[0,10],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr)
+fig = DIAG.plotAlignedConditionals(push_rho, range_vec=[0,10],numPointsXax=50, fig=fig, show_flag=False, vartitles=varstr,title='Push forward of TM with order 2',show_title=True)
 plt.show()
 
 # Visualize aligned marginals of samples of push forward
 fig = plt.figure(figsize=(6,6))
 varstr = [r"$\rho$", r"$\sigma$", r"$\beta$"]
-fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr,title='',show_axis=True)
+fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr, figname='Marginals',title='Samples_TM with order 2')
 plt.show()
 
 
@@ -331,18 +298,17 @@ elapsed_time_MCMC = end_time_MCMC - start_time_MCMC
 print("Elapsed time for MCMC:", elapsed_time_MCMC, "seconds")
 
 
-
 # Formate Samples into Matrix
 samples = np.array([sublist[0] for sublist in Samples])
 
 # Visualize the samples of MCMC
 fig = plt.figure(figsize=(6,6))
-varstr = [r"$\rho$",r"$\sigma$",r"$\beta$"]
-fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr,title='',show_axis=True)
+varstr = [r"$rho$",r"$sigma$",r"$beta$"]
+fig = DIAG.plotAlignedMarginals(samples,fig=fig,show_flag=False, vartitles=varstr, figname='Marginals',title='Samples_MCMC')
 plt.show()
 
 # Visualize the scatter samples of MCMC
 fig = plt.figure(figsize=(6,6))
-varstr = [r"$\rho$",r"$\sigma$",r"$\beta$"]
+varstr = [r"$rho$",r"$sigma$",r"$beta$"]
 fig = DIAG.plotAlignedScatters(samples, s=1, bins=50, vartitles=varstr,fig=fig, show_flag=False)
 plt.show()
